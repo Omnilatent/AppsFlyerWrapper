@@ -1,0 +1,16 @@
+{
+    "name": "com.omnilatent.appsflyerwrapper",
+    "displayName": "AppsFlyer Wrapper",
+    "version": "1.0.0",
+    "unity": "2018.1",
+    "description": "Wrapper class for AppsFlyer functions.",
+    "keywords": ["appsflyer"],
+    "category": "Wrapper",
+    "dependencies": {
+    },
+    "author": {
+        "name": "Trong",
+        "email": "nguyentrong101094@gmail.com",
+        "url": "https://github.com/nguyentrong101094"
+  }
+}
