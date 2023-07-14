@@ -52,6 +52,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerPurchaseConnector.startObservingTransactions();
             
             AppsFlyerSDK.AppsFlyer.startSDK();
+
+            UninstallMeasurement.Init();
         }
 
         // Mark AppsFlyer CallBacks
