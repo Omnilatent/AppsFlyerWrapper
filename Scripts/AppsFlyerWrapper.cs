@@ -54,8 +54,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
 
+            AppsFlyerAdRevenue.start();
             AppsFlyerSDK.AppsFlyer.startSDK();
-
             UninstallMeasurement.Init();
         }
 
@@ -102,9 +102,9 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public static void TrackRevenueAdmob(int value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
-            adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
-            adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
-            // adRevenueEvent.Add(AFInAppEvents.QUANTITY, "1");
+            // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
+            // adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
+            adRevenueEvent.Add(AFInAppEvents.QUANTITY, "1");
             adRevenueEvent.Add(AFInAppEvents.CONTENT_TYPE, "admob_revenue");
 
             if (additionalData != null)
@@ -113,16 +113,17 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             eventName = string.IsNullOrEmpty(eventName) ? "af_show_ad_interstitial" : eventName;
-            AppsFlyer.sendEvent(eventName, adRevenueEvent);
+            // AppsFlyer.sendEvent(eventName, adRevenueEvent);
+            AppsFlyerAdRevenue.logAdRevenue("admob", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob, value, currencyCode, adRevenueEvent);
             Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
         }
         
         public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
-            adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
-            adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
-            // adRevenueEvent.Add(AFInAppEvents.QUANTITY, "1");
+            // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
+            // adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
+            adRevenueEvent.Add(AFInAppEvents.QUANTITY, "1");
             adRevenueEvent.Add(AFInAppEvents.CONTENT_TYPE, "max_revenue");
 
             if (additionalData != null)
@@ -131,7 +132,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             eventName = string.IsNullOrEmpty(eventName) ? "af_show_ad_interstitial" : eventName;
-            AppsFlyer.sendEvent(eventName, adRevenueEvent);
+            // AppsFlyer.sendEvent(eventName, adRevenueEvent);
+            AppsFlyerAdRevenue.logAdRevenue("max", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax, value, currencyCode, adRevenueEvent);
             Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
         }
 
