@@ -16,6 +16,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public string appID;
         public bool getConversionData;
         public bool debugLogEvent = false;
+        public string eventLogOnAppLoseFocus = "in_background";
 
         private static AppsFlyerWrapper instance;
 
@@ -170,6 +171,14 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
         {
             AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (!hasFocus && !string.IsNullOrEmpty(eventLogOnAppLoseFocus))
+            {
+                LogEvent(eventLogOnAppLoseFocus);
+            }
         }
     }
 }
