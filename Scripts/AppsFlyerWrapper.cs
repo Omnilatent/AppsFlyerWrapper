@@ -17,6 +17,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public bool getConversionData;
         public bool debugLogEvent = false;
         public string eventLogOnAppLoseFocus = "in_background";
+        public static bool logAdRevenueAsEvent = true; //log an event alongside appsflyer' ad revenue API 
 
         private static AppsFlyerWrapper instance;
 
@@ -53,7 +54,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
-            
+
             AppsFlyerAdRevenue.setIsDebug(isDebug);
             AppsFlyerAdRevenue.start();
             AppsFlyerSDK.AppsFlyer.startSDK();
@@ -114,12 +115,20 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 foreach (var data in additionalData) { adRevenueEvent.Add(data.Key, data.Value); }
             }
 
-            eventName = string.IsNullOrEmpty(eventName) ? "af_show_ad_interstitial" : eventName;
+            eventName = string.IsNullOrEmpty(eventName) ? "show_ad" : eventName;
             // AppsFlyer.sendEvent(eventName, adRevenueEvent);
-            AppsFlyerAdRevenue.logAdRevenue("admob", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob, value, currencyCode, adRevenueEvent);
+            AppsFlyerAdRevenue.logAdRevenue("admob", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob, value,
+                currencyCode, adRevenueEvent);
+            if (logAdRevenueAsEvent)
+            {
+                adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
+                adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
+                LogEvent(eventName, adRevenueEvent);
+            }
+
             Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
         }
-        
+
         public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
@@ -133,9 +142,17 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 foreach (var data in additionalData) { adRevenueEvent.Add(data.Key, data.Value); }
             }
 
-            eventName = string.IsNullOrEmpty(eventName) ? "af_show_ad_interstitial" : eventName;
+            eventName = string.IsNullOrEmpty(eventName) ? "show_ad" : eventName;
             // AppsFlyer.sendEvent(eventName, adRevenueEvent);
-            AppsFlyerAdRevenue.logAdRevenue("max", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax, value, currencyCode, adRevenueEvent);
+            AppsFlyerAdRevenue.logAdRevenue("max", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax, value,
+                currencyCode, adRevenueEvent);
+            if (logAdRevenueAsEvent)
+            {
+                adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
+                adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
+                LogEvent(eventName, adRevenueEvent);
+            }
+
             Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
         }
 
@@ -181,10 +198,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            if (!hasFocus && !string.IsNullOrEmpty(eventLogOnAppLoseFocus))
-            {
-                LogEvent(eventLogOnAppLoseFocus);
-            }
+            if (!hasFocus && !string.IsNullOrEmpty(eventLogOnAppLoseFocus)) { LogEvent(eventLogOnAppLoseFocus); }
         }
     }
 }
