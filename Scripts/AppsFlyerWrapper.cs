@@ -41,7 +41,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             bool isDebug = Debug.isDebugBuild;
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
-            
+
             AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
             AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
@@ -50,7 +50,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
-            
+
             AppsFlyerSDK.AppsFlyer.startSDK();
 
             UninstallMeasurement.Init();
@@ -96,17 +96,41 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         public static void LogEvent(string name) { LogEvent(name, string.Empty, String.Empty); }
 
-        /* setup on dashboard for revenue
-        public static void TrackRevenueAdmob(int value, string currencyCode)
+        public static void TrackRevenueAdmob(int value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
             adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
             adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
-            adRevenueEvent.Add(AFInAppEvents.QUANTITY, "1");
+            // adRevenueEvent.Add(AFInAppEvents.QUANTITY, "1");
             adRevenueEvent.Add(AFInAppEvents.CONTENT_TYPE, "admob_revenue");
-            AppsFlyer.sendEvent(AFInAppEvents.PURCHASE, adRevenueEvent);
-            Debug.Log($"AppsFlyer tracked");
-        }*/
+
+            if (additionalData != null)
+            {
+                foreach (var data in additionalData) { adRevenueEvent.Add(data.Key, data.Value); }
+            }
+
+            eventName = string.IsNullOrEmpty(eventName) ? "af_show_ad_interstitial" : eventName;
+            AppsFlyer.sendEvent(eventName, adRevenueEvent);
+            Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
+        }
+        
+        public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
+        {
+            System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
+            adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
+            adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
+            // adRevenueEvent.Add(AFInAppEvents.QUANTITY, "1");
+            adRevenueEvent.Add(AFInAppEvents.CONTENT_TYPE, "max_revenue");
+
+            if (additionalData != null)
+            {
+                foreach (var data in additionalData) { adRevenueEvent.Add(data.Key, data.Value); }
+            }
+
+            eventName = string.IsNullOrEmpty(eventName) ? "af_show_ad_interstitial" : eventName;
+            AppsFlyer.sendEvent(eventName, adRevenueEvent);
+            Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
+        }
 
         static bool CheckEventNameValid(string eventName, string paramName = "")
         {
