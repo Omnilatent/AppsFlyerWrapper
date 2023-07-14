@@ -17,7 +17,13 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public bool getConversionData;
         public bool debugLogEvent = false;
         public string eventLogOnAppLoseFocus = "in_background";
-        public static bool logAdRevenueAsEvent = true; //log an event alongside appsflyer' ad revenue API 
+        public static bool logAdRevenueAsEvent = true; //log an event alongside appsflyer' ad revenue API
+        private static bool initialized = false;
+
+        public static bool Initialized
+        {
+            get => initialized;
+        }
 
         private static AppsFlyerWrapper instance;
 
@@ -59,6 +65,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerAdRevenue.start();
             AppsFlyerSDK.AppsFlyer.startSDK();
             UninstallMeasurement.Init();
+            initialized = true;
         }
 
         // Mark AppsFlyer CallBacks
@@ -86,6 +93,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         public static void LogEvent(string name, string paramName, string value)
         {
+            if (!Initialized) { return; }
+
             CheckEventNameValid(name);
             LogConsole(name, paramName, value);
             Dictionary<string, string> eventValues = new Dictionary<string, string>();
@@ -95,6 +104,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         public static void LogEvent(string name, Dictionary<string, string> value)
         {
+            if (!Initialized) { return; }
+            
             CheckEventNameValid(name);
             AppsFlyerSDK.AppsFlyer.sendEvent(name, value);
         }
