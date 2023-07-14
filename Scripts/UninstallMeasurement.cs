@@ -16,8 +16,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
     {
         public static void Init()
         {
-            Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
-
+            ListenToFCMEvent();
 #if UNITY_IOS
         RequestAuthorization();
 
@@ -31,6 +30,12 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
         }
 #endif
+        }
+
+        private static async void ListenToFCMEvent()
+        {
+            await Task.Delay(500);
+            Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
         }
 
         public static void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token)

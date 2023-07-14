@@ -39,6 +39,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 return;
             }
 
+            DontDestroyOnLoad(gameObject);
+
             bool isDebug = Debug.isDebugBuild;
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
