@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using AppsFlyerConnector;
 using AppsFlyerSDK;
 using Firebase.Analytics;
 using UnityEngine;
@@ -37,8 +38,19 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 return;
             }
 
-            AppsFlyerSDK.AppsFlyer.setIsDebug(Debug.isDebugBuild);
+            bool isDebug = Debug.isDebugBuild;
+            AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
+            
+            AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
+            AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
+            AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
+                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
+                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
+            AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
+            AppsFlyerPurchaseConnector.build();
+            AppsFlyerPurchaseConnector.startObservingTransactions();
+            
             AppsFlyerSDK.AppsFlyer.startSDK();
         }
 
@@ -127,6 +139,11 @@ namespace Omnilatent.AppsFlyerWrapperNS
 #if UNITY_EDITOR
             if (Instance.debugLogEvent) { Debug.Log($"<color=yellow>AppsFlyer log:</color> {name}, {paramName}, {value}"); }
 #endif
+        }
+
+        public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
+        {
+            AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
         }
     }
 }
