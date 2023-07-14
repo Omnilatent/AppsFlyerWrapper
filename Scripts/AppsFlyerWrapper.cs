@@ -53,7 +53,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
             AppsFlyerPurchaseConnector.build();
             AppsFlyerPurchaseConnector.startObservingTransactions();
-
+            
+            AppsFlyerAdRevenue.setIsDebug(isDebug);
             AppsFlyerAdRevenue.start();
             AppsFlyerSDK.AppsFlyer.startSDK();
             UninstallMeasurement.Init();
@@ -99,8 +100,9 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         public static void LogEvent(string name) { LogEvent(name, string.Empty, String.Empty); }
 
-        public static void TrackRevenueAdmob(int value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
+        public static void TrackRevenueAdmob(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
+            value = value / 1000000;
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
             // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
             // adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
