@@ -18,6 +18,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public bool debugLogEvent = false;
         public string eventLogOnAppLoseFocus = "in_background";
         public static bool logAdRevenueAsEvent = true; //log an event alongside appsflyer' ad revenue API
+        private const string REVENUE_PARAM_NAME = "revenue";
         private static bool initialized = false;
 
         public static bool Initialized
@@ -115,6 +116,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public static void TrackRevenueAdmob(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
             value = value / 1000000;
+            string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
             // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
             // adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
@@ -133,15 +135,16 @@ namespace Omnilatent.AppsFlyerWrapperNS
             if (logAdRevenueAsEvent)
             {
                 adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
-                adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
+                adRevenueEvent.Add(REVENUE_PARAM_NAME, valueStr);
                 LogEvent(eventName, adRevenueEvent);
             }
 
-            Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
+            Debug.Log($"AppsFlyer tracked {valueStr} {currencyCode}");
         }
 
         public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
+            string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
             // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
             // adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
@@ -160,7 +163,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             if (logAdRevenueAsEvent)
             {
                 adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
-                adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
+                adRevenueEvent.Add(REVENUE_PARAM_NAME, valueStr);
                 LogEvent(eventName, adRevenueEvent);
             }
 
