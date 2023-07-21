@@ -35,11 +35,6 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         private void Start()
         {
-            if (initializeAutomatically) Init();
-        }
-
-        public void Init()
-        {
             if (instance == null) { instance = this; }
             else if (instance != this)
             {
@@ -48,7 +43,11 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             DontDestroyOnLoad(gameObject);
+            if (initializeAutomatically) Initialize();
+        }
 
+        public void Initialize()
+        {
             bool isDebug = Debug.isDebugBuild;
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
@@ -106,7 +105,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public static void LogEvent(string name, Dictionary<string, string> value)
         {
             if (!Initialized) { return; }
-            
+
             CheckEventNameValid(name);
             AppsFlyerSDK.AppsFlyer.sendEvent(name, value);
         }
