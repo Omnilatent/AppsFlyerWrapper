@@ -34,8 +34,15 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         private static async void ListenToFCMEvent()
         {
-            await Task.Delay(500);
+            //Require Firebase Manager
+            #if OMNILATENT_FIREBASE_MANAGER
+            FirebaseManager.CheckWaitForReady((sender, success) =>
+            {
+                if (success) { Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived; }
+            });
+#else
             Firebase.Messaging.FirebaseMessaging.TokenReceived += OnTokenReceived;
+#endif
         }
 
         public static void OnTokenReceived(object sender, Firebase.Messaging.TokenReceivedEventArgs token)

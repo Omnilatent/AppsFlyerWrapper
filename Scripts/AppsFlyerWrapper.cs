@@ -19,6 +19,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public string eventLogOnAppLoseFocus = "in_background";
         public static bool logAdRevenueAsEvent = true; //log an event alongside appsflyer' ad revenue API
         private const string REVENUE_PARAM_NAME = "revenue";
+        public static Action<object, AppsFlyerRequestEventArgs> OnRequestResponse;
         private static bool initialized = false;
 
         public static bool Initialized
@@ -207,6 +208,14 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
         {
             AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
+        }
+        
+        void AppsFlyerOnRequestResponse(object sender, EventArgs e)
+        {
+            var args = e as AppsFlyerRequestEventArgs;
+            AppsFlyer.AFLog("AppsFlyerOnRequestResponse", " status code " + args.statusCode);
+            Debug.Log("AppsFlyerOnRequestResponse " + args.statusCode);
+            OnRequestResponse?.Invoke(sender, args);
         }
 
         private void OnApplicationFocus(bool hasFocus)
