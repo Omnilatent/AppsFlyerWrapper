@@ -5,7 +5,8 @@
         "AppsFlyer",
         "AppsFlyerConnector",
         "AppsFlyerAdRevenueConnector",
-        "Omnilatent.Firebase"
+        "Omnilatent.Firebase",
+        "Unity.Notifications.iOS"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
