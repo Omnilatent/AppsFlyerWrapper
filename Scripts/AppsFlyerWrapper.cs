@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+#if OMNILATENT_APPSFLYER_WRAPPER
 using AppsFlyerConnector;
+#endif
 using AppsFlyerSDK;
 using Firebase.Analytics;
 using UnityEngine;
@@ -53,6 +55,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
 
+#if OMNILATENT_APPSFLYER_WRAPPER
             AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
             AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
@@ -64,6 +67,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
             AppsFlyerAdRevenue.setIsDebug(isDebug);
             AppsFlyerAdRevenue.start();
+#endif
             AppsFlyerSDK.AppsFlyer.startSDK();
             UninstallMeasurement.Init();
             initialized = true;
@@ -115,6 +119,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         public static void TrackRevenueAdmob(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
+#if OMNILATENT_APPSFLYER_WRAPPER
             value = value / 1000000;
             string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
@@ -140,10 +145,12 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             Debug.Log($"AppsFlyer tracked {valueStr} {currencyCode}");
+#endif
         }
 
         public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
+#if OMNILATENT_APPSFLYER_WRAPPER
             string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
             // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
@@ -168,6 +175,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
+#endif
         }
 
         static bool CheckEventNameValid(string eventName, string paramName = "")
@@ -209,7 +217,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         {
             AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
         }
-        
+
         void AppsFlyerOnRequestResponse(object sender, EventArgs e)
         {
             var args = e as AppsFlyerRequestEventArgs;
