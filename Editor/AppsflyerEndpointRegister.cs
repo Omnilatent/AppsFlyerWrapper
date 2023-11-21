@@ -6,12 +6,13 @@ using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
 #endif
 
-public class AppsflyerEndpointRegister
+namespace Omnilatent.AppsFlyerWrapperNS.EditorNS
 {
-
-    [PostProcessBuildAttribute]
-    public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
+    public class AppsflyerEndpointRegister
     {
+        [PostProcessBuildAttribute]
+        public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
+        {
 #if UNITY_IOS
         if (target == BuildTarget.iOS)
         {
@@ -31,5 +32,6 @@ public class AppsflyerEndpointRegister
             Debug.Log("Info.plist updated with NSAdvertisingAttributionReportEndpoint");
         }
 #endif
+        }
     }
 }
