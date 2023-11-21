@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+#if OMNILATENT_APPSFLYER_WRAPPER
 using AppsFlyerConnector;
+#endif
 using AppsFlyerSDK;
 using Firebase.Analytics;
 using UnityEngine;
@@ -19,6 +21,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public string eventLogOnAppLoseFocus = "in_background";
         public static bool logAdRevenueAsEvent = true; //log an event alongside appsflyer' ad revenue API
         private const string REVENUE_PARAM_NAME = "revenue";
+        public static Action<object, AppsFlyerRequestEventArgs> OnRequestResponse;
         private static bool initialized = false;
 
         public static bool Initialized
@@ -35,11 +38,6 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         private void Start()
         {
-            if (initializeAutomatically) Init();
-        }
-
-        public void Init()
-        {
             if (instance == null) { instance = this; }
             else if (instance != this)
             {
@@ -48,11 +46,16 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             DontDestroyOnLoad(gameObject);
+            if (initializeAutomatically) Initialize();
+        }
 
+        public void Initialize()
+        {
             bool isDebug = Debug.isDebugBuild;
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
 
+#if OMNILATENT_APPSFLYER_WRAPPER
             AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
             AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
             AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
@@ -64,6 +67,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
             AppsFlyerAdRevenue.setIsDebug(isDebug);
             AppsFlyerAdRevenue.start();
+#endif
             AppsFlyerSDK.AppsFlyer.startSDK();
             UninstallMeasurement.Init();
             initialized = true;
@@ -106,7 +110,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public static void LogEvent(string name, Dictionary<string, string> value)
         {
             if (!Initialized) { return; }
-            
+
             CheckEventNameValid(name);
             AppsFlyerSDK.AppsFlyer.sendEvent(name, value);
         }
@@ -115,6 +119,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         public static void TrackRevenueAdmob(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
+#if OMNILATENT_APPSFLYER_WRAPPER
             value = value / 1000000;
             string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
@@ -140,10 +145,12 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             Debug.Log($"AppsFlyer tracked {valueStr} {currencyCode}");
+#endif
         }
 
         public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
+#if OMNILATENT_APPSFLYER_WRAPPER
             string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
             // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
@@ -168,6 +175,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
+#endif
         }
 
         static bool CheckEventNameValid(string eventName, string paramName = "")
@@ -208,6 +216,14 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
         {
             AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
+        }
+
+        void AppsFlyerOnRequestResponse(object sender, EventArgs e)
+        {
+            var args = e as AppsFlyerRequestEventArgs;
+            AppsFlyer.AFLog("AppsFlyerOnRequestResponse", " status code " + args.statusCode);
+            Debug.Log("AppsFlyerOnRequestResponse " + args.statusCode);
+            OnRequestResponse?.Invoke(sender, args);
         }
 
         private void OnApplicationFocus(bool hasFocus)

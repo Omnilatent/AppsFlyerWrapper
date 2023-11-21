@@ -1,14 +1,10 @@
 {
-    "name": "Omnilatent.AppsFlyerUtils",
+    "name": "Omnilatent.AppsFlyer.EditorNS",
     "rootNamespace": "",
-    "references": [
-        "AppsFlyer",
-        "AppsFlyerConnector",
-        "AppsFlyerAdRevenueConnector",
-        "Omnilatent.Firebase",
-        "Unity.Notifications.iOS"
+    "references": [],
+    "includePlatforms": [
+        "Editor"
     ],
-    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
