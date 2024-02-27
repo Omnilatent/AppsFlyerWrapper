@@ -68,6 +68,9 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerAdRevenue.setIsDebug(isDebug);
             AppsFlyerAdRevenue.start();
 #endif
+#if UNITY_IOS && !UNITY_EDITOR
+        AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
+#endif
             AppsFlyerSDK.AppsFlyer.startSDK();
             UninstallMeasurement.Init();
             initialized = true;

@@ -26,7 +26,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             {
                 while (!req.IsFinished) { await Task.Delay(20); }
 
-                if (req.Granted && req.DeviceToken != "") { AppsFlyer.registerUninstall(Encoding.UTF8.GetBytes(req.DeviceToken)); }
+                if (req.Granted && !string.IsNullOrEmpty(req.DeviceToken)) { AppsFlyer.registerUninstall(Encoding.UTF8.GetBytes(req.DeviceToken)); }
             }
         }
 #endif
