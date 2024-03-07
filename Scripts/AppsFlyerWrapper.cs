@@ -55,22 +55,30 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
 
-#if OMNILATENT_APPSFLYER_WRAPPER
-            AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
-            AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
-            AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
-                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
-                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
-            AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
-            AppsFlyerPurchaseConnector.build();
-            AppsFlyerPurchaseConnector.startObservingTransactions();
-
+            #if OMNILATENT_APPSFLYER_WRAPPER
+            try
+            {
+                AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
+                AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
+                AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
+                    AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
+                    AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
+                AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
+                AppsFlyerPurchaseConnector.build();
+                AppsFlyerPurchaseConnector.startObservingTransactions();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                Debug.Log("Failed to init AppsFlyer Purchase Connector. Check if Unity In App Purchase package was installed.");
+            }
+            
             AppsFlyerAdRevenue.setIsDebug(isDebug);
             AppsFlyerAdRevenue.start();
-#endif
-#if UNITY_IOS && !UNITY_EDITOR
-        AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
-#endif
+            #endif
+            #if UNITY_IOS && !UNITY_EDITOR
+            AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
+            #endif
             AppsFlyerSDK.AppsFlyer.startSDK();
             UninstallMeasurement.Init();
             initialized = true;
