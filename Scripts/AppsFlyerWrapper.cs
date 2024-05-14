@@ -16,7 +16,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public bool initializeAutomatically = true;
         public string devKey;
         public string appID;
-        public bool getConversionData;
+        public bool getConversionData = true;
         public bool debugLogEvent = false;
         public string eventLogOnAppLoseFocus = "in_background";
         public static bool logAdRevenueAsEvent = true; //log an event alongside appsflyer' ad revenue API
