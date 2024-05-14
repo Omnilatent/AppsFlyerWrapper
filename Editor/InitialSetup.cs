@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -54,20 +55,30 @@ namespace Omnilatent.AppsFlyerWrapperNS.EditorNS
             label.style.whiteSpace = WhiteSpace.Normal;
             root.Add(label);
 
-            Button button = new Button();
+            Button button = MakeButton($"1. Initialize Scripting define symbol", InitScriptingDefineSymbol);
             button.style.height = 80;
-            button.style.marginTop = new StyleLength(StyleKeyword.Auto);
-            button.style.marginBottom = 10;
-            button.name = "button";
-            button.text = $"Import {PackageName}'s essential files";
-            button.clicked += OnInstall;
             root.Add(button);
+            
+            Button button2 = MakeButton($"2. (Optional) Import AppsFlyer Purchase Connector Assembly definition file", ImportRequiredFiles);
+            button2.style.height = 50;
+            root.Add(button2);
+
+            Button MakeButton(string text, Action onClick)
+            {
+                Button button = new Button();
+                button.style.marginTop = new StyleLength(StyleKeyword.Auto);
+                button.style.marginBottom = 10;
+                button.name = "button";
+                button.text = text;
+                button.clicked += onClick;
+                return button;
+            }
         }
 
         private void OnInstall()
         {
-            ImportRequiredFiles();
-            InitScriptingDefineSymbol();
+            ImportRequiredFiles(); //as of Appsflyer 6.14.3, this is not required anymore.
+            // InitScriptingDefineSymbol();
         }
 
         public static void ImportRequiredFiles()
