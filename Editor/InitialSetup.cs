@@ -10,18 +10,37 @@ namespace Omnilatent.AppsFlyerWrapperNS.EditorNS
 {
     public class InitialSetup : EditorWindow
     {
+        private static InitialSetup _instance;
         private const string PackageName = "AppsFlyer Wrapper";
-        
+
+        #if !OMNILATENT_APPSFLYER_WRAPPER
+        [UnityEditor.Callbacks.DidReloadScripts]
+        #endif
+        private static void ShowInstallWindowWhenReady()
+        {
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+            {
+                EditorApplication.delayCall += ShowInstallWindowWhenReady;
+                return;
+            }
+
+            EditorApplication.delayCall += ShowInstallWindow;
+        }
+
         [MenuItem("Tools/Omnilatent/AppsFlyer/Import essential files")]
-#if !OMNILATENT_APPSFLYER_WRAPPER
-        [InitializeOnLoadMethod]
-#endif
         public static void ShowInstallWindow()
         {
-            InitialSetup wnd = GetWindow<InitialSetup>();
-            wnd.maxSize = new Vector2(670f, 280f);
-            wnd.minSize = new Vector2(500f, 280f);
-            wnd.titleContent = new GUIContent($"{PackageName} Initial Setup");
+            if (_instance == null)
+            {
+                _instance = GetWindow<InitialSetup>();
+                _instance.maxSize = new Vector2(670f, 280f);
+                _instance.minSize = new Vector2(500f, 280f);
+                _instance.titleContent = new GUIContent($"{PackageName} Initial Setup");
+            }
+            else
+            {
+                _instance.Focus();
+            }
         }
 
         public void CreateGUI()
@@ -50,10 +69,11 @@ namespace Omnilatent.AppsFlyerWrapperNS.EditorNS
             ImportRequiredFiles();
             InitScriptingDefineSymbol();
         }
-        
+
         public static void ImportRequiredFiles()
         {
-            string path = GetPackagePath("Assets/Omnilatent/AppsFlyerWrapper/AppsFlyerConnectorAsmdef.unitypackage", "AppsFlyerConnectorAsmdef");
+            string path = GetPackagePath("Assets/Omnilatent/AppsFlyerWrapper/AppsFlyerConnectorAsmdef.unitypackage",
+                "AppsFlyerConnectorAsmdef");
             AssetDatabase.ImportPackage(path, true);
         }
 
@@ -73,14 +93,15 @@ namespace Omnilatent.AppsFlyerWrapperNS.EditorNS
                     return null;
                 }
             }
+
             return path;
         }
-        
+
         const string SYMBOL = "OMNILATENT_APPSFLYER_WRAPPER";
 
         public static void InitScriptingDefineSymbol()
         {
-#if !OMNILATENT_APPSFLYER_WRAPPER
+            #if !OMNILATENT_APPSFLYER_WRAPPER
             // Get current defines
             string defineSymbolString = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
             // Split at ;
@@ -97,7 +118,7 @@ namespace Omnilatent.AppsFlyerWrapperNS.EditorNS
 
                 Debug.Log($"Scripting Define Symbol '{SYMBOL}' was added.");
             }
-#endif
+            #endif
         }
     }
 }
