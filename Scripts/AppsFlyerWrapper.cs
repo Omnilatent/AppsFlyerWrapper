@@ -23,6 +23,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         private const string REVENUE_PARAM_NAME = "revenue";
         public static Action<object, AppsFlyerRequestEventArgs> OnRequestResponse;
         private static bool initialized = false;
+        [SerializeField] protected bool _initPurchaseConnector = true; 
 
         public static bool Initialized
         {
@@ -56,23 +57,26 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
 
             #if OMNILATENT_APPSFLYER_WRAPPER
-            try
+            if (_initPurchaseConnector)
             {
-                AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
-                AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
-                AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
-                    AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
-                    AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
-                AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
-                AppsFlyerPurchaseConnector.build();
-                AppsFlyerPurchaseConnector.startObservingTransactions();
+                try
+                {
+                    AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
+                    AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
+                    AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
+                        AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
+                        AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
+                    AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
+                    AppsFlyerPurchaseConnector.build();
+                    AppsFlyerPurchaseConnector.startObservingTransactions();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogException(e);
+                    Debug.Log("Failed to init AppsFlyer Purchase Connector. Check if Unity In App Purchase package was installed.");
+                }
             }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-                Debug.Log("Failed to init AppsFlyer Purchase Connector. Check if Unity In App Purchase package was installed.");
-            }
-            
+
             AppsFlyerAdRevenue.setIsDebug(isDebug);
             AppsFlyerAdRevenue.start();
             #endif
