@@ -23,7 +23,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
         private const string REVENUE_PARAM_NAME = "revenue";
         public static Action<object, AppsFlyerRequestEventArgs> OnRequestResponse;
         private static bool initialized = false;
-        [SerializeField] protected bool _initPurchaseConnector = true; 
+        [SerializeField] protected bool _initPurchaseConnector = true;
+        private static bool isDebug;
 
         public static bool Initialized
         {
@@ -52,7 +53,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         public void Initialize()
         {
-            bool isDebug = Debug.isDebugBuild;
+            isDebug = Debug.isDebugBuild;
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
 
@@ -195,8 +196,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         static bool CheckEventNameValid(string eventName, string paramName = "")
         {
-            bool isDebugging = Debug.isDebugBuild;
             bool isValid = true;
+            bool isDebugging = isDebug;
 #if UNITY_EDITOR
             isDebugging = true;
 #endif
