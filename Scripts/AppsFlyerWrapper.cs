@@ -55,6 +55,13 @@ namespace Omnilatent.AppsFlyerWrapperNS
         {
             isDebug = Debug.isDebugBuild;
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
+
+            #if UNITY_IOS
+            if (string.IsNullOrEmpty(appID))
+            {
+                Debug.LogException(new ArgumentException("AppsFlyer Wrapper's App ID is empty."));
+            }
+            #endif
             AppsFlyerSDK.AppsFlyer.initSDK(devKey, appID, getConversionData ? this : null);
 
             #if OMNILATENT_APPSFLYER_WRAPPER
