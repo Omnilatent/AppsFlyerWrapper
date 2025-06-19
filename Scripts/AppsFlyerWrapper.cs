@@ -85,8 +85,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 }
             }
 
-            AppsFlyerAdRevenue.setIsDebug(isDebug);
-            AppsFlyerAdRevenue.start();
+            // AppsFlyerAdRevenue.setIsDebug(isDebug);
+            // AppsFlyerAdRevenue.start();
             #endif
             #if UNITY_IOS && !UNITY_EDITOR
             AppsFlyer.waitForATTUserAuthorizationWithTimeoutInterval(60);
@@ -157,9 +157,11 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             eventName = string.IsNullOrEmpty(eventName) ? "show_ad" : eventName;
-            // AppsFlyer.sendEvent(eventName, adRevenueEvent);
-            AppsFlyerAdRevenue.logAdRevenue("admob", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob, value,
-                currencyCode, adRevenueEvent);
+            // AppsFlyerAdRevenue.logAdRevenue("admob", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob, value, currencyCode, adRevenueEvent);
+            
+            var logRevenue = new AFAdRevenueData("monetizationNetworkEx", MediationNetwork.GoogleAdMob, "USD", value);
+            AppsFlyer.logAdRevenue(logRevenue, additionalData);
+            
             if (logAdRevenueAsEvent)
             {
                 adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
@@ -187,9 +189,9 @@ namespace Omnilatent.AppsFlyerWrapperNS
             }
 
             eventName = string.IsNullOrEmpty(eventName) ? "show_ad" : eventName;
-            // AppsFlyer.sendEvent(eventName, adRevenueEvent);
-            AppsFlyerAdRevenue.logAdRevenue("max", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax, value,
-                currencyCode, adRevenueEvent);
+            // AppsFlyerAdRevenue.logAdRevenue("max", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax, value, currencyCode, adRevenueEvent);
+            var logRevenue = new AFAdRevenueData("monetizationNetworkEx", MediationNetwork.ApplovinMax, "USD", value);
+            AppsFlyer.logAdRevenue(logRevenue, additionalData);
             if (logAdRevenueAsEvent)
             {
                 adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
