@@ -14,8 +14,10 @@ namespace Omnilatent.AppsFlyerWrapperNS
     public class AppsFlyerWrapper : MonoBehaviour, IAppsFlyerConversionData
     {
         public bool initializeAutomatically = true;
-        public string devKey;
-        public string appID;
+        [Tooltip("Dev Key from AppsFlyer's Dashboard")]
+        public string devKey; //e.g: 8Zi1y.....6OJMzx84emOz
+        [Tooltip("Apple store's App ID")]
+        public string appID; //get from App store connect. It's all number.
         public bool getConversionData = true;
         public bool debugLogEvent = false;
         public string eventLogOnAppLoseFocus = "in_background";
@@ -56,6 +58,10 @@ namespace Omnilatent.AppsFlyerWrapperNS
             isDebug = Debug.isDebugBuild;
             AppsFlyerSDK.AppsFlyer.setIsDebug(isDebug);
 
+            if (string.IsNullOrEmpty(devKey))
+            {
+                Debug.LogException(new ArgumentException("AppsFlyer Wrapper's Dev Key is empty."));
+            }
             #if UNITY_IOS
             if (string.IsNullOrEmpty(appID))
             {
