@@ -1,7 +1,7 @@
 {
     "name": "com.omnilatent.appsflyerwrapper",
     "displayName": "AppsFlyer Wrapper",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "unity": "2018.1",
     "description": "Wrapper class for AppsFlyer functions.",
     "keywords": ["appsflyer"],
