@@ -2,9 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-#if OMNILATENT_APPSFLYER_WRAPPER
-using AppsFlyerConnector;
-#endif
 using AppsFlyerSDK;
 using Firebase.Analytics;
 using UnityEngine;
@@ -75,12 +72,13 @@ namespace Omnilatent.AppsFlyerWrapperNS
             {
                 try
                 {
-                    AppsFlyerPurchaseConnector.init(this, AppsFlyerConnector.Store.GOOGLE);
-                    AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
+                    AppsFlyerPurchaseConnector.init(this, Store.GOOGLE);
+                    /*AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
                     AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
                         AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
                         AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases);
-                    AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
+                    AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);*/
+                    ConfigurePurchaseConnector();
                     AppsFlyerPurchaseConnector.build();
                     AppsFlyerPurchaseConnector.startObservingTransactions();
                 }
@@ -255,6 +253,31 @@ namespace Omnilatent.AppsFlyerWrapperNS
             AppsFlyer.AFLog("AppsFlyerOnRequestResponse", " status code " + args.statusCode);
             Debug.Log("AppsFlyerOnRequestResponse " + args.statusCode);
             OnRequestResponse?.Invoke(sender, args);
+        }
+        
+        private void ConfigurePurchaseConnector()
+        {
+            // Set sandbox mode for testing
+            AppsFlyerPurchaseConnector.setIsSandbox(isDebug);
+        
+            // Configure StoreKit version (iOS only) - SK1 is the default
+            // AppsFlyerPurchaseConnector.setStoreKitVersion(StoreKitVersion.SK2);
+        
+            // Enable automatic logging for subscriptions and in-app purchases
+            AppsFlyerPurchaseConnector.setAutoLogPurchaseRevenue(
+                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsAutoRenewableSubscriptions,
+                AppsFlyerAutoLogPurchaseRevenueOptions.AppsFlyerAutoLogPurchaseRevenueOptionsInAppPurchases
+            );
+        
+            // Enable purchase validation callbacks
+            AppsFlyerPurchaseConnector.setPurchaseRevenueValidationListeners(true);
+        
+            // Set data sources for additional parameters (iOS) - SK1
+            #if UNITY_IOS
+            AppsFlyerPurchaseConnector.setPurchaseRevenueDataSource(this);
+            #endif
+            // Set data sources for additional parameters (iOS) - SK2
+            // AppsFlyerPurchaseConnector.setPurchaseRevenueDataSourceStoreKit2(this);
         }
 
         private void OnApplicationFocus(bool hasFocus)
