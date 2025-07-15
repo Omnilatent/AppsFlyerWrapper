@@ -163,7 +163,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             eventName = string.IsNullOrEmpty(eventName) ? "show_ad" : eventName;
             // AppsFlyerAdRevenue.logAdRevenue("admob", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob, value, currencyCode, adRevenueEvent);
             
-            var logRevenue = new AFAdRevenueData("monetizationNetworkEx", MediationNetwork.GoogleAdMob, "USD", value);
+            var logRevenue = new AFAdRevenueData("googleadmob", MediationNetwork.GoogleAdMob, "USD", value);
             AppsFlyer.logAdRevenue(logRevenue, additionalData);
             
             if (logAdRevenueAsEvent)
@@ -194,7 +194,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
             eventName = string.IsNullOrEmpty(eventName) ? "show_ad" : eventName;
             // AppsFlyerAdRevenue.logAdRevenue("max", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax, value, currencyCode, adRevenueEvent);
-            var logRevenue = new AFAdRevenueData("monetizationNetworkEx", MediationNetwork.ApplovinMax, "USD", value);
+            var logRevenue = new AFAdRevenueData("applovinmax", MediationNetwork.ApplovinMax, "USD", value);
             AppsFlyer.logAdRevenue(logRevenue, additionalData);
             if (logAdRevenueAsEvent)
             {
