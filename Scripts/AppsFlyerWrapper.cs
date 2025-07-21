@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Omnilatent.AppsFlyerWrapperNS
 {
-    public class AppsFlyerWrapper : MonoBehaviour, IAppsFlyerConversionData
+    public class AppsFlyerWrapper : MonoBehaviour, IAppsFlyerConversionData, IAppsFlyerPurchaseRevenueDataSource
     {
         public bool initializeAutomatically = true;
         [Tooltip("Dev Key from AppsFlyer's Dashboard")]
@@ -283,6 +283,18 @@ namespace Omnilatent.AppsFlyerWrapperNS
         private void OnApplicationFocus(bool hasFocus)
         {
             if (!hasFocus && !string.IsNullOrEmpty(eventLogOnAppLoseFocus)) { LogEvent(eventLogOnAppLoseFocus); }
+        }
+
+        public Dictionary<string, object> PurchaseRevenueAdditionalParametersForProducts(HashSet<object> products, HashSet<object> transactions)
+        {
+            // Add custom parameters to purchase events
+            return new Dictionary<string, object>
+            {
+                // ["custom_param_1"] = "value1",
+                // ["custom_param_2"] = "value2",
+                // ["user_level"] = 5,
+                // ["purchase_source"] = "main_store"
+            };
         }
     }
 }
