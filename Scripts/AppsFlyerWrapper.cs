@@ -173,7 +173,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 LogEvent(eventName, adRevenueEvent);
             }
 
-            Debug.Log($"AppsFlyer tracked {valueStr} {currencyCode}");
+            Debug.Log($"AppsFlyer tracked Admob {valueStr} {currencyCode}");
 #endif
         }
 
@@ -203,7 +203,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 LogEvent(eventName, adRevenueEvent);
             }
 
-            Debug.Log($"AppsFlyer tracked {value} {currencyCode}");
+            Debug.Log($"AppsFlyer tracked MAX {value} {currencyCode}");
 #endif
         }
 
