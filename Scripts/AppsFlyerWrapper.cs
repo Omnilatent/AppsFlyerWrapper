@@ -30,6 +30,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
             get => initialized;
         }
 
+        private List<AdRevenueTrackingBase> _revenueTrackers;
+
         private static AppsFlyerWrapper instance;
 
         public static AppsFlyerWrapper Instance
@@ -97,6 +99,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
             #endif
             AppsFlyerSDK.AppsFlyer.startSDK();
             UninstallMeasurement.Init();
+            _revenueTrackers = new();
+            GetComponents<AdRevenueTrackingBase>(_revenueTrackers);
             initialized = true;
         }
 
@@ -148,7 +152,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
         {
 #if OMNILATENT_APPSFLYER_WRAPPER
             value = value / 1000000;
-            string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
+            // string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
+            string valueStr = RevenueToString(value);
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
             // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
             // adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
@@ -173,6 +178,10 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 LogEvent(eventName, adRevenueEvent);
             }
 
+            foreach (var revenueTracker in Instance._revenueTrackers)
+            {
+                revenueTracker.TrackRevenueAdmob(value, currencyCode, additionalData);
+            }
             Debug.Log($"AppsFlyer tracked Admob {valueStr} {currencyCode}");
 #endif
         }
@@ -180,7 +189,8 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
         {
 #if OMNILATENT_APPSFLYER_WRAPPER
-            string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
+            // string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
+            string valueStr = RevenueToString(value);
             System.Collections.Generic.Dictionary<string, string> adRevenueEvent = new System.Collections.Generic.Dictionary<string, string>();
             // adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
             // adRevenueEvent.Add(AFInAppEvents.REVENUE, value.ToString());
@@ -201,6 +211,11 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
                 adRevenueEvent.Add(REVENUE_PARAM_NAME, valueStr);
                 LogEvent(eventName, adRevenueEvent);
+            }
+
+            foreach (var revenueTracker in Instance._revenueTrackers)
+            {
+                revenueTracker.TrackRevenueMAX(value, currencyCode, additionalData);
             }
 
             Debug.Log($"AppsFlyer tracked MAX {value} {currencyCode}");
@@ -295,6 +310,11 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 // ["user_level"] = 5,
                 // ["purchase_source"] = "main_store"
             };
+        }
+
+        public static string RevenueToString(double value)
+        {
+            return value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
         }
     }
 }
