@@ -8,7 +8,8 @@ using UnityEngine;
 
 namespace Omnilatent.AppsFlyerWrapperNS
 {
-    public class AppsFlyerWrapper : MonoBehaviour, IAppsFlyerConversionData, IAppsFlyerPurchaseRevenueDataSource
+    public class AppsFlyerWrapper : MonoBehaviour, IAppsFlyerConversionData, IAppsFlyerPurchaseRevenueDataSource,
+        IAppsFlyerPurchaseValidation
     {
         public bool initializeAutomatically = true;
         [Tooltip("Dev Key from AppsFlyer's Dashboard")]
@@ -260,6 +261,12 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
         {
             AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
+        }
+
+        public void didReceivePurchaseRevenueError(string error)
+        {
+            AppsFlyer.AFLog("didReceivePurchaseRevenueError", error);
+            Debug.LogError("Purchase validation error: " + error);
         }
 
         void AppsFlyerOnRequestResponse(object sender, EventArgs e)
