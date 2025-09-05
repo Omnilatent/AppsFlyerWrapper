@@ -84,6 +84,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
                     ConfigurePurchaseConnector();
                     AppsFlyerPurchaseConnector.build();
                     AppsFlyerPurchaseConnector.startObservingTransactions();
+                    Debug.Log($"AppsFlyerPurchaseConnector start observing transactions");
                 }
                 catch (Exception e)
                 {
@@ -261,6 +262,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
         public void didReceivePurchaseRevenueValidationInfo(string validationInfo)
         {
             AppsFlyer.AFLog("didReceivePurchaseRevenueValidationInfo", validationInfo);
+            Debug.Log("Purchase validation success: " + validationInfo);
         }
 
         public void didReceivePurchaseRevenueError(string error)
