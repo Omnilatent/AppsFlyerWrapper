@@ -149,7 +149,10 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
         public static void LogEvent(string name) { LogEvent(name, string.Empty, String.Empty); }
 
-        public static void TrackRevenueAdmob(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
+        /// <param name="monetizationNetwork">Network that actually served the ad (AdMob adSourceName), not the mediation.</param>
+        /// <param name="adType">Ad format, sent under AdRevenueScheme.AD_TYPE so AppsFlyer can parse it.</param>
+        public static void TrackRevenueAdmob(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null,
+            string monetizationNetwork = null, string adType = null)
         {
 #if OMNILATENT_APPSFLYER_WRAPPER
             value = value / 1000000;
@@ -169,8 +172,11 @@ namespace Omnilatent.AppsFlyerWrapperNS
             eventName = string.IsNullOrEmpty(eventName) ? "show_ad" : eventName;
             // AppsFlyerAdRevenue.logAdRevenue("admob", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeGoogleAdMob, value, currencyCode, adRevenueEvent);
             
-            var logRevenue = new AFAdRevenueData("googleadmob", MediationNetwork.GoogleAdMob, "USD", value);
-            AppsFlyer.logAdRevenue(logRevenue, additionalData);
+            var afParams = additionalData != null ? new Dictionary<string, string>(additionalData) : new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(adType)) { afParams[AdRevenueScheme.AD_TYPE] = adType; }
+            string network = string.IsNullOrEmpty(monetizationNetwork) ? "googleadmob" : monetizationNetwork;
+            var logRevenue = new AFAdRevenueData(network, MediationNetwork.GoogleAdMob, currencyCode, value);
+            AppsFlyer.logAdRevenue(logRevenue, afParams);
             
             if (logAdRevenueAsEvent)
             {
@@ -183,7 +189,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
             {
                 revenueTracker.TrackRevenueAdmob(value, currencyCode, additionalData);
             }
-            Debug.Log($"AppsFlyer tracked Admob {valueStr} {currencyCode}");
+            Debug.Log($"AppsFlyer tracked Admob {valueStr} {currencyCode} network={network} ad_type={adType}");
 #endif
         }
 
