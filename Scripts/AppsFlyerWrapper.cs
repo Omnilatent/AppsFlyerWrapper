@@ -187,7 +187,10 @@ namespace Omnilatent.AppsFlyerWrapperNS
 #endif
         }
 
-        public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null)
+        /// <param name="monetizationNetwork">Network that actually served the ad (MAX networkName), not the mediation.</param>
+        /// <param name="adType">Ad format, sent under AdRevenueScheme.AD_TYPE so AppsFlyer can parse it.</param>
+        public static void TrackRevenueMAX(double value, string currencyCode, string eventName = "", Dictionary<string, string> additionalData = null,
+            string monetizationNetwork = null, string adType = null)
         {
 #if OMNILATENT_APPSFLYER_WRAPPER
             // string valueStr = value.ToString("0.0000000", System.Globalization.CultureInfo.InvariantCulture);
@@ -205,8 +208,11 @@ namespace Omnilatent.AppsFlyerWrapperNS
 
             eventName = string.IsNullOrEmpty(eventName) ? "show_ad" : eventName;
             // AppsFlyerAdRevenue.logAdRevenue("max", AppsFlyerAdRevenueMediationNetworkType.AppsFlyerAdRevenueMediationNetworkTypeApplovinMax, value, currencyCode, adRevenueEvent);
-            var logRevenue = new AFAdRevenueData("applovinmax", MediationNetwork.ApplovinMax, "USD", value);
-            AppsFlyer.logAdRevenue(logRevenue, additionalData);
+            var afParams = additionalData != null ? new Dictionary<string, string>(additionalData) : new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(adType)) { afParams[AdRevenueScheme.AD_TYPE] = adType; }
+            string network = string.IsNullOrEmpty(monetizationNetwork) ? "applovinmax" : monetizationNetwork;
+            var logRevenue = new AFAdRevenueData(network, MediationNetwork.ApplovinMax, currencyCode, value);
+            AppsFlyer.logAdRevenue(logRevenue, afParams);
             if (logAdRevenueAsEvent)
             {
                 adRevenueEvent.Add(AFInAppEvents.CURRENCY, currencyCode);
@@ -219,7 +225,7 @@ namespace Omnilatent.AppsFlyerWrapperNS
                 revenueTracker.TrackRevenueMAX(value, currencyCode, additionalData);
             }
 
-            Debug.Log($"AppsFlyer tracked MAX {value} {currencyCode}");
+            Debug.Log($"AppsFlyer tracked MAX {value} {currencyCode} network={network} ad_type={adType}");
 #endif
         }
 
